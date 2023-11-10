@@ -1,0 +1,3 @@
+com.jiuzhou.desgin.spi.impl.FootCacheLoader
+com.jiuzhou.desgin.spi.impl.LeftCacheLoader
+com.jiuzhou.desgin.spi.impl.MouthCacheLoader
