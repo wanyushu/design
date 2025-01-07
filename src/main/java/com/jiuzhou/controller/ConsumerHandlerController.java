@@ -1,6 +1,7 @@
 package com.jiuzhou.controller;
 
 
+import com.jiuzhou.desgin.rfc7616.RfcService;
 import com.jiuzhou.utils.ApplicationContextUtil;
 import com.jiuzhou.desgin.chain.ChainHandler;
 import com.jiuzhou.desgin.chain.context.WomanContext;
@@ -11,6 +12,7 @@ import com.jiuzhou.desgin.observer.ObserverHandler;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,6 +37,9 @@ public class ConsumerHandlerController {
     @Qualifier("iDecorateService")
     @Autowired
     private DecorateService decorateService;
+
+    @Autowired
+    private RfcService rfcService;
 
     /**
      * 该方法是模拟 消息队列类回调处理
@@ -96,4 +101,10 @@ public class ConsumerHandlerController {
         factoryProxy.execute(coinName);
         return "OK";
     }
+
+
+
+
+
+
 }
