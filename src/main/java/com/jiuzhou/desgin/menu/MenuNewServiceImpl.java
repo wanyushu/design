@@ -24,11 +24,11 @@ public class MenuNewServiceImpl {
         for (MenuNewDO menu : list) {
             parentIdMap.put(menu.getMenuId(), menu.getParentId());
         }
-        
+
         // 按照父级菜单id进行分组，其下是对应的菜单id集合
         Map<Long, List<MenuNewDO>> groupedByParentId = list.stream()
-            .collect(Collectors.groupingBy(MenuNewDO::getParentId));
-        
+                .collect(Collectors.groupingBy(MenuNewDO::getParentId));
+
         // 处理根节点（parentId 为 0 的菜单）
         List<MenuNewDO> rootMenus = groupedByParentId.get(0L); // 获取 parentId 为 0 的菜单
         //子一级菜单
@@ -44,6 +44,7 @@ public class MenuNewServiceImpl {
                 rootMenu.setNewId(rootNewId);
                 newIdMap.put(rootMenu.getMenuId(), rootNewId);
                 rootMenu.setNewLevel(1); // 根菜单的层级为 1
+                rootMenu.setNewXh(index);
             }
         }
         //初始化得到处理后的一级节点 加入队列
@@ -59,25 +60,25 @@ public class MenuNewServiceImpl {
             if (children != null) {
                 // 按 menuId 排序子菜单，确保最小的 menuId 在前
                 children.sort(Comparator.comparingLong(MenuNewDO::getMenuId));
-                
+
                 for (int i = 0; i < children.size(); i++) {
                     MenuNewDO childMenu = children.get(i);
                     String newId = generateNewId(newIdMap, currentMenuId, i+1); // 生成 new_id
                     childMenu.setNewId(newId);
                     newIdMap.put(childMenu.getMenuId(), newId);
-                    
+
                     // 设置 new_pid
                     childMenu.setNewPid(generateNewPid(newIdMap.get(currentMenuId))); // 确保 parentId 的长度为 20 位
-                    
+
                     // 设置 new_level
                     childMenu.setNewLevel(getNewLevel(newIdMap, childMenu.getMenuId(), parentIdMap)); // 直接调用 getNewLevel
-                    
+                    childMenu.setNewXh(i+1);
                     // 将子菜单加入队列
                     queue.add(childMenu);
                 }
             }
         }
-        
+
         return list;
     }
 
@@ -96,7 +97,7 @@ public class MenuNewServiceImpl {
             // 获取父级id parentId = 12030000000000000000， int index 如果等于3 则 menuId = 12030300000000000000
             String replace = trimTrailingZeros(parentNewId);
 
-            newId.append(replace);  
+            newId.append(replace);
             if(index<10){
                 newId.append("0").append(index);
             }else{
@@ -114,12 +115,12 @@ public class MenuNewServiceImpl {
     private String generateNewPid(String parentNewId) {
         // 确保 parentId 的长度为 20 位
         StringBuilder newPid = new StringBuilder(parentNewId);
-        
+
         // 填充到 20 位
         while (newPid.length() < 20) {
             newPid.append("0");
         }
-        
+
         return newPid.toString();
     }
 
@@ -150,12 +151,12 @@ public class MenuNewServiceImpl {
         }
         // 返回去除后的字符串
         String result = id.substring(0, index + 1);
-        
+
         // 如果结果的长度是单数，则在末尾补零
         if (result.length() % 2 != 0) {
             result += "0";
         }
-        
+
         return result;
     }
 }
